@@ -1,4 +1,5 @@
 //==================================== ECS =====================================
+var canvasMoving = true;
 
 var ECS = { 
   Entities:[],
@@ -9,10 +10,12 @@ var ECS = {
     },
     
     movement: function() {
-      for(var id in ECS.Entities) {
-        var entity = ECS.Entities[id];
-        if(entity.components.mover) {
-            entity.components.mover.move();
+      if(canvasMoving) {
+        for(var id in ECS.Entities) {
+          var entity = ECS.Entities[id];
+          if(entity.components.mover) {
+              entity.components.mover.move();
+          }
         }
       }
     },
@@ -28,12 +31,13 @@ var ECS = {
               var pos2 = entity2.components.position;
               var dx = pos1.x - pos2.x;
               var dy = pos1.y - pos2.y;
+              var d = Math.sqrt(dx * dx + dy * dy);
               
-              if(Math.sqrt(dx * dx + dy * dy) < 
+              if(d < 
                   entity.components.collider.radius +
                   entity2.components.collider.radius) {
-                entity.components.collider.collide(entity2);
-                entity2.components.collider.collide(entity);
+                entity.components.collider.collide(entity2, d);
+                entity2.components.collider.collide(entity, d);
               }
             }
           }
@@ -44,7 +48,6 @@ var ECS = {
     cleanUp: function() {
       for(var i = 0; i < ECS.Entities.length; i++) {
         var entity = ECS.Entities[i];
-        entity.print();
         if(entity.components.health && entity.components.health.value < 0) {
           ECS.Entities.splice(i,1);
         }
@@ -131,7 +134,7 @@ ECS.Components.Mover = function ComponentMover(speed, move){
 };
 ECS.Components.Mover.prototype.name = 'mover';
 
-//Takes a circle collider radius and a FUNCTION that takes a collider
+//Takes a circle collider radius and a FUNCTION that takes a collider and distance
 ECS.Components.Collider = function ComponentCollider(radius,collide){
  this.radius = radius;
  this.collide = collide;
@@ -146,35 +149,94 @@ ECS.Components.Renderer = function ComponentRenderer(renderer){
 };
 ECS.Components.Renderer.prototype.name = 'renderer';
 
+//Takes a position component
+ECS.Components.Targeter = function ComponentTargeter(position){
+ this.position = position;
+ return this;
+};
+ECS.Components.Targeter.prototype.name = 'targeter';
+
 //================================ Assemblages =================================
 
-function assembleTest(x,y,s,r) {
+function assembleTest(e) {
+  var s = Math.random() * 7;
+  var r = Math.random() * 30;
+  
+  var x = Math.random() * this.canvas.width;
+  var y = Math.random() * this.canvas.height;
+  
   var entity = new ECS.Entity();
   entity.addComponent( new ECS.Components.Health(1) );
   entity.addComponent( new ECS.Components.Position(x,y));
+  
+  if(e !== null){
+    entity.addComponent( new ECS.Components.Targeter(e.components.position));
+  }
+  entity.addComponent( new ECS.Components.Mover(s, function(){
+    if(e !== null) {
+      var target = entity.components.targeter.position;
+      var position = entity.components.position;
+      var dx = target.x - position.x;
+      var dy = target.y - position.y;
+      var d = Math.sqrt(dx * dx + dy * dy);
+      position.x += this.speed * dx / d
+      position.y += this.speed * dy / d
+    }
+  }));
+  
+  entity.addComponent( new ECS.Components.Collider(r, function(ce, d) {
+    var cposition = ce.components.position;
+    var position = entity.components.position;
+    var dx = cposition.x - position.x;
+    var dy = cposition.y - position.y;
+    
+    cposition.x += entity.components.mover.speed * dx/d;
+    cposition.y += entity.components.mover.speed * dy/d;
+  }));
+  
   entity.addComponent( new ECS.Components.Renderer(function() {
     ctx.beginPath();
-    ctx.rect(entity.components.position.x - r,
-             entity.components.position.y - r,2*r,2*r);
+    ctx.arc(entity.components.position.x, 
+            entity.components.position.y, r, 0, Math.PI*2, false);
+    if(e !== null) {
+      ctx.fillStyle = "white";
+    } else {
+      ctx.fillStyle = "rgb(180, 180, 255)";
+    }
+    ctx.fill();
     ctx.strokeStyle = "rgba(30, 30, 105, 0.95)";
     ctx.stroke();
+    
+    if(e != null) {
+      ctx.moveTo(entity.components.position.x,entity.components.position.y);
+      ctx.lineTo(entity.components.targeter.position.x,
+                 entity.components.targeter.position.y);
+      ctx.stroke();
+    }
+    
     ctx.closePath();
   }));
-  entity.addComponent( new ECS.Components.Mover(s, function(){
-    entity.components.position.x += this.speed;
-    console.log("3");
-  }));
+  
   return entity;
 }
 
 
 //================================ Canvas Code =================================
 
+function resetCanvas() {
+  clearCanvas();
+  populateCanvas();
+}
+
+function clearCanvas() {
+  ECS.Entities = [];
+}
+
 function createCanvas() {
   var canvas = document.createElement("Canvas");
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight - 2;
-  canvas.style.zIndex = 10;
+  canvas.style.zIndex = 1;
   canvas.style.position = "absolute";
   canvas.style.border   = "1px solid";
   
@@ -190,27 +252,26 @@ function createCanvas() {
     drawEverything();
   });
   
-  initCanvas();
+  populateCanvas();
   setInterval(update, 17); //60 fps
 }
 
-function initCanvas() {
-  ECS.Entities.push(assembleTest(30,40,2,8));
-  ECS.Entities.push(assembleTest(350,420,1,2));
-  ECS.Entities.push(assembleTest(130,40,-1,10));
-  ECS.Entities.push(assembleTest(130,140,12,5));
+function populateCanvas() {
+  var e1 = assembleTest(null);
+  var e2 = assembleTest(e1);
   
-  ctx.beginPath();
-  ctx.rect(20, 40, 50, 50);
-  ctx.fillStyle = "#FF0000";
-  ctx.fill();
-  ctx.closePath();
-
-  ctx.beginPath();
-  ctx.arc(240, 160, 20, 0, Math.PI*2, false);
-  ctx.fillStyle = "green";
-  ctx.fill();
-  ctx.closePath();
+  var e3 = assembleTest(e2);
+  var e4 = assembleTest(e3);
+  
+  var e5 = assembleTest(e3);
+  var e6 = assembleTest(e5);
+  
+  ECS.Entities.push(e1);
+  ECS.Entities.push(e2);
+  ECS.Entities.push(e3);
+  ECS.Entities.push(e4);
+  ECS.Entities.push(e5);
+  ECS.Entities.push(e6);
 }
 
 function drawEverything() {

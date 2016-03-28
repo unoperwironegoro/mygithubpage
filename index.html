@@ -51,7 +51,7 @@
                                    </p>
                                    <p>I'm currently a first year Computing undergraduate at Imperial College London.
                                    </p>
-                                   <p>In my free time I make games. Also, I love writing music and singing!
+                                   <p>In my free time I make games. I also love writing music and singing!
                                    </p>
                                 </div>
                             </div>
@@ -95,11 +95,25 @@
     <!-- Header -->
     <header class="header">
         <div id="header" class="text-vertical-center">
-            <div>
+            <div id="overlay">
                 <h1>Hi! I'm Uno,</h1>
                 <h3>and welcome to my webpage!</h3>
                 <br>
-                <a class="btn btn-light btn-power" onclick="activateButton()"><i class="fa fa-power-off"></i></a>
+                <div>
+                  <a class="btn btn-light icon-circle" onclick="activatePower()">
+                    <i class="fa fa-power-off"></i>
+                  </a>
+                  <a class="btn btn-light icon-circle" 
+                                    onclick="pausePlayToggle()">
+                    <i id="pausePlay" class="fa fa-pause"></i>
+                  </a>
+                  <a class="btn btn-light icon-circle" onclick="clearCanvas()">
+                    <i class="fa fa-stop"></i>
+                  </a>
+                  <a class="btn btn-light icon-circle" onclick="resetCanvas()">
+                    <i class="fa fa-repeat"></i>
+                  </a>
+                </div>
             </div>
         </div>
     </header>
@@ -112,6 +126,10 @@
 
     <!-- Main Page JavaScript -->
     <script>
+    $(document).ready(function() {
+        createCanvas();
+    });
+    
     // Closes the sidebar menu
     $("#menu-close").click(function(e) {
         e.preventDefault();
@@ -124,9 +142,15 @@
         $("#sidebar-wrapper").toggleClass("active");
     });
     
-    function activateButton() {
+    function activatePower() {
         removeHeader();
-        createCanvas();
+        //startIconArmy();
+    }
+    
+    function pausePlayToggle() {
+        $("#pausePlay").toggleClass("fa-pause");
+        $("#pausePlay").toggleClass("fa-play");
+        canvasMoving = !canvasMoving;
     }
     
     function removeHeader() {

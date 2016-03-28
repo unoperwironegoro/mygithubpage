@@ -18,7 +18,7 @@ body {
 }
 
 body {
-	font-family: 'Lucida Grande', 'Helvetica Neue', sans-serif;
+	font-family: 'Lucida Grande','Helvetica Neue',sans-serif;
 	font-size: 13px;
 	overflow-x: hidden;
 }
@@ -54,7 +54,7 @@ canvas {
     background-color: rgba(030,030,120,0.8);
 }
 
-.btn-power {
+.icon-circle {
   width: 60px;
   height: 60px;
   text-align: center;
@@ -62,12 +62,6 @@ canvas {
   font-size: 30px;
   line-height: 1.6;
   border-radius: 30px;
-}
-
-/* Custom Horizontal Rule */
-
-hr.small {
-    max-width: 100px;
 }
 
 /* Side Menu */
@@ -163,6 +157,10 @@ hr.small {
 }
 
 /* Header */
+#overlay {
+    position: relative;
+    z-index: 1000;
+}
 
 .header {
     display: table;
@@ -170,9 +168,4 @@ hr.small {
     width: 100%;
     height: 100%;
     background-color: rgb(160,160,205);
-    /*background: url(../img/bg.jpg) no-repeat center center scroll;
-    -webkit-background-size: cover;
-    -moz-background-size: cover;
-    background-size: cover;
-    -o-background-size: cover;*/
 }
