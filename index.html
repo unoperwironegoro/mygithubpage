@@ -31,7 +31,6 @@
 </head>
 
 <body>
-
     <!-- Navigation -->
     <a id="menu-toggle" href="#" class="btn btn-light btn-lg toggle"><i class="fa fa-bars"></i></a>
     <nav id="sidebar-wrapper">
@@ -42,7 +41,7 @@
             </li>
                 <div class="panel-group" id="accordion">
                     <li>
-                        <a class="btn-dark" data-toggle="collapse" data-parent="#accordion" href="#About">About Me</a>
+                        <a data-toggle="collapse" data-parent="#accordion" href="#About">About Me</a>
                     </li>
                     <div class="panel">
                             <div id ="About" class="panel-collapse collapse">
@@ -58,7 +57,7 @@
                             </div>
                     </div>
                     <li>
-                        <a class="btn-dark" data-toggle="collapse" data-parent="#accordion" href="#CV">CV</a>
+                        <a data-toggle="collapse" data-parent="#accordion" href="#CV">CV</a>
                     </li>
                     <div class="panel">
                             <div id ="CV" class="panel-collapse collapse">
@@ -67,7 +66,7 @@
                             </div>
                     </div>
                     <li>
-                        <a class="btn-dark" data-toggle="collapse" data-parent="#accordion" href="#Portfolio">Portfolio</a>
+                        <a data-toggle="collapse" data-parent="#accordion" href="#Portfolio">Portfolio</a>
                     </li>
                     <div class="panel">
                             <div id ="Portfolio" class="collapse">
@@ -76,7 +75,7 @@
                             </div>
                     </div>
                     <li>
-                        <a class="btn-dark" data-toggle="collapse" data-parent="#accordion" href="#Contact">Contact Details</a>
+                        <a data-toggle="collapse" data-parent="#accordion" href="#Contact">Contact Details</a>
                     </li>
                     <div class="panel">
                             <div id ="Contact" class="panel-collapse collapse"> 
@@ -92,14 +91,16 @@
                 </div>
         </ul>
     </nav>
-
+    
     <!-- Header -->
-    <header id="top" class="header">
-        <div class="text-vertical-center">
-            <h1>Hi! I'm Uno,</h1>
-            <h3>and welcome to my webpage!</h3>
-            <br>
-            <a class="btn btn-light btn-power"><i class="fa fa-power-off"></i></a>
+    <header class="header">
+        <div id="header" class="text-vertical-center">
+            <div>
+                <h1>Hi! I'm Uno,</h1>
+                <h3>and welcome to my webpage!</h3>
+                <br>
+                <a class="btn btn-light btn-power" onclick="activateButton()"><i class="fa fa-power-off"></i></a>
+            </div>
         </div>
     </header>
 
@@ -109,7 +110,7 @@
     <!-- Bootstrap Core JavaScript -->
     <script src="js/bootstrap.min.js"></script>
 
-    <!-- Custom Theme JavaScript -->
+    <!-- Main Page JavaScript -->
     <script>
     // Closes the sidebar menu
     $("#menu-close").click(function(e) {
@@ -122,7 +123,19 @@
         e.preventDefault();
         $("#sidebar-wrapper").toggleClass("active");
     });
+    
+    function activateButton() {
+        removeHeader();
+        createCanvas();
+    }
+    
+    function removeHeader() {
+        $("#header").fadeOut(1000);
+    }
     </script>
+    
+    <!-- Canvas JavaScript -->
+    <script src="js/canvas.js"></script>
 
 </body>
 
