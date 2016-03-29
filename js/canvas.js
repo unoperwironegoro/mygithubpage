@@ -315,6 +315,7 @@ function resetCanvas() {
 
 function clearCanvas() {
   ECS.Entities = [];
+  canvas.width = canvas.width;
 }
 
 function createCanvas() {
@@ -460,10 +461,9 @@ function drawEverything() {
       ctx.fillStyle = "rgba(180, 180, 255, 0.5)";
     }
     ctx.fill();
+    ctx.closePath();
     ctx.strokeStyle = "rgba(30, 30, 105, 0.5)";
     ctx.stroke();
-    
-    ctx.closePath();
     
     ctx.beginPath();
     ctx.moveTo(mouse.x - axisLength, mouse.y);
