@@ -314,7 +314,7 @@ function resetCanvas() {
 }
 
 function clearCanvas() {
-  ECS.Entities = [];
+  ECS.Entities.length = 0;
 }
 
 function createCanvas() {
