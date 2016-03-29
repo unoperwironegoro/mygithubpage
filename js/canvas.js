@@ -315,6 +315,7 @@ function resetCanvas() {
 
 function clearCanvas() {
   ECS.Entities = [];
+  $("canvas").hide().fadeIn(2000);
 }
 
 function createCanvas() {
@@ -326,6 +327,8 @@ function createCanvas() {
   canvas.style.border   = "1px solid";
 
   document.body.insertBefore(canvas, document.body.children[1]);
+  
+  $("canvas").hide().fadeIn(1000);
   
   this.canvas = canvas;
   this.ctx = canvas.getContext("2d");
