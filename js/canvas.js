@@ -324,7 +324,7 @@ function createCanvas() {
   canvas.height = window.innerHeight - 2;
   canvas.style.zIndex = 1;
   canvas.style.position = "absolute";
-  canvas.style.border   = "1px solid";
+  canvas.style.border   = "10px solid";
 
   document.body.insertBefore(canvas, document.body.children[1]);
   

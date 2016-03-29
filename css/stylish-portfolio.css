@@ -23,10 +23,6 @@ body {
 	overflow-x: hidden;
 }
 
-canvas {
-  border: 1px solid black;
-}
-
 .text-vertical-center {
     display: table-cell;
     text-align: center;
