@@ -93,7 +93,7 @@ canvas {
 }
 
 .sidebar-nav {
-    position: fixed;
+    position: absolute;
     top: 0;
     width: 275px;
     margin: 0;
