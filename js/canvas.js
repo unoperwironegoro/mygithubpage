@@ -53,6 +53,10 @@ var ECS = {
     },
     
     collision: function() {
+      if(!canvasMoving) {
+        return;
+      }
+      
       for(var i = 0; i < ECS.Entities.length; i++) {
         var entity = ECS.Entities[i];
         if(entity.components.collider) {
@@ -61,13 +65,32 @@ var ECS = {
             if(entity2.components.collider) {
               var pos1 = entity.components.position;
               var pos2 = entity2.components.position;
-              var dx = pos1.x - pos2.x;
-              var dy = pos1.y - pos2.y;
-              var d = Math.sqrt(dx * dx + dy * dy);
               
-              if(d < 
-                  entity.components.collider.radius +
-                  entity2.components.collider.radius) {
+              var dx = pos1.x - pos2.x;
+              var dlx = pos1.x - canvas.width - pos2.x;
+              var drx = pos1.x + canvas.width - pos2.x;
+              
+              var dy = pos1.y - pos2.y;
+              var ddy = pos1.y - canvas.height - pos2.y;
+              var duy = pos1.y + canvas.height - pos2.y;
+              
+              var d = magnitude({x: dx, y: dy});
+              var dd = magnitude({x: dx, y: ddy});
+              var du = magnitude({x: dx, y: duy});
+              var dl = magnitude({x: dlx, y: dy});
+              var dld = magnitude({x: dlx, y: ddy});
+              var dlu = magnitude({x: dlx, y: duy});
+              var dr = magnitude({x: drx, y: dy});
+              var drd = magnitude({x: drx, y: ddy});
+              var dru = magnitude({x: drx, y: duy});
+              var minCollD = entity.components.collider.radius +
+                             entity2.components.collider.radius;
+                             
+                             
+              
+              if(d < minCollD || dd < minCollD || du < minCollD
+                  || dl < minCollD || dld < minCollD || dlu < minCollD
+                  || dr < minCollD || drd < minCollD || dru < minCollD) {
                 entity.components.collider.collide(entity2, d);
                 entity2.components.collider.collide(entity, d);
               }
@@ -232,10 +255,15 @@ function assembleCircle(x,y,s,r,e) {
   
   entity.addComponent( new ECS.Components.Renderer(function() {
     drawCircle(entity.components.position.x, entity.components.position.y, r, e);
-    drawCircle(entity.components.position.x + canvas.width, entity.components.position.y, r, e);
     drawCircle(entity.components.position.x - canvas.width, entity.components.position.y, r, e);
-    drawCircle(entity.components.position.x, entity.components.position.y + canvas.height, r, e);
+    drawCircle(entity.components.position.x + canvas.width, entity.components.position.y, r, e);
     drawCircle(entity.components.position.x, entity.components.position.y - canvas.height, r, e);
+    drawCircle(entity.components.position.x, entity.components.position.y + canvas.height, r, e);
+    
+    drawCircle(entity.components.position.x - canvas.width, entity.components.position.y - canvas.height, r, e);
+    drawCircle(entity.components.position.x - canvas.width, entity.components.position.y + canvas.height, r, e);
+    drawCircle(entity.components.position.x + canvas.width, entity.components.position.y - canvas.height, r, e);
+    drawCircle(entity.components.position.x + canvas.width, entity.components.position.y + canvas.height, r, e);
     
     ctx.beginPath();
     if(e != null) {
@@ -277,6 +305,8 @@ var mouse = {
 var isCharging = false;
 var pixelsPerSpeed = 40;
 var circleSize = 3;
+var circleSpeed = 3;
+var axisLength = 10;
 
 function resetCanvas() {
   clearCanvas();
@@ -319,11 +349,7 @@ function createCanvas() {
     isCharging = false;
     
     var r = circleSize;
-    
-    var targVec = getTargVec();
-    var mouseVec = getMouseVec();
-    var proj = project(rot90(targVec), mouseVec);
-    var s = distance(0, proj.x, 0, proj.y) / pixelsPerSpeed;
+    var s = circleSpeed  / pixelsPerSpeed;
     
     var entity = assembleCircle(mouse.x, mouse.y, s, r, targetEntity);
     ECS.Entities.push(entity);
@@ -338,12 +364,15 @@ function createCanvas() {
       mouse.lx = e.pageX;
       mouse.ly = e.pageY;
       
-      var targVec = getTargVec();
+      var basisVec = getSizeBasis();
       var mouseVec = getMouseVec();
       
-      var proj = project(targVec, mouseVec);
+      var sizeProj = project(basisVec, mouseVec);
+      var speedProj = project(rot90(basisVec), mouseVec);
       
-      circleSize = distance(0, proj.x, 0, proj.y);
+      circleSize = magnitude(sizeProj);
+      circleSpeed = magnitude(speedProj);
+      
     } else {
       mouse.x = e.pageX;// - this.offset.left;
       mouse.y = e.pageY;// - this.offset.top;
@@ -402,21 +431,23 @@ function drawEverything() {
   
   if(mouse.lx !== null && mouse.ly !== null) {
     ctx.beginPath();
-    var startX = 2 * mouse.x - mouse.lx;
-    var startY = 2 * mouse.y - mouse.ly;
-    
     if(targetEntity !== null){
       var targPos = targetEntity.components.position;
       var arrowPoint = getIntermediatePoint(mouse.x, targPos.x, mouse.y, targPos.y,
-                        distance(mouse.lx, mouse.x, mouse.ly, mouse.y)
-                        /distance(targPos.x, mouse.x, targPos.y, mouse.y));
+                        circleSpeed / distance(targPos.x, mouse.x, targPos.y, mouse.y));
     }
+    
+    var perpNormTargetVec = rot90(norm(getTargetVec()));
+    var startX = mouse.x - perpNormTargetVec.x * circleSpeed;
+    var startY = mouse.y - perpNormTargetVec.y * circleSpeed;
+    var endX = mouse.x + perpNormTargetVec.x * circleSpeed;
+    var endY = mouse.y + perpNormTargetVec.y * circleSpeed;
     
     ctx.moveTo(startX, startY);
     if(targetEntity !== null) {
       ctx.lineTo(arrowPoint.x, arrowPoint.y);
     }
-    ctx.lineTo(mouse.lx, mouse.ly);
+    ctx.lineTo(endX, endY);
     ctx.closePath();
     ctx.strokeStyle = "rgba(80, 80, 165, 0.5)";
     ctx.stroke();
@@ -433,10 +464,36 @@ function drawEverything() {
     ctx.stroke();
     
     ctx.closePath();
+    
+    ctx.beginPath();
+    ctx.moveTo(mouse.x - axisLength, mouse.y);
+    ctx.lineTo(mouse.x + axisLength, mouse.y);
+    ctx.closePath();
+    ctx.strokeStyle = "rgba(105, 30, 105, 0.5)";
+    ctx.stroke();
+    
+    ctx.beginPath();
+    ctx.moveTo(mouse.x, mouse.y - axisLength);
+    ctx.lineTo(mouse.x, mouse.y + axisLength);
+    ctx.closePath();
+    ctx.strokeStyle = "rgba(105, 30, 105, 0.5)";
+    ctx.stroke();
   }
 }
 
 //============================ Helper Functions ================================
+function norm(vec) {
+  var r = magnitude(vec);
+  return {
+          x: vec.x / r,
+          y: vec.y / r
+        };
+}
+
+function magnitude(vec) {
+  return Math.sqrt(vec.x * vec.x + vec.y * vec.y);
+}
+
 function rot90(vec) {
   var rotVec = {
     x: -1 * vec.y,
@@ -468,8 +525,8 @@ function getIntermediatePoint(x1,x2,y1,y2,fraction) {
   return point;
 }
 
-function getTargVec() {
-  var targVec = {}
+function getTargetVec() {
+  var targVec = {};
   if(targetEntity !== null) {
     targVec = {
       x: targetEntity.components.position.x - mouse.x,
@@ -482,6 +539,13 @@ function getTargVec() {
     }
   }
   return targVec;
+}
+
+function getSizeBasis() {
+  return {
+          x: 1,
+          y: 0
+        }
 }
 
 function getMouseVec() {
