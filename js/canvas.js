@@ -315,7 +315,6 @@ function resetCanvas() {
 
 function clearCanvas() {
   ECS.Entities = [];
-  ctx.clearRect(0,0,canvas.width,canvas.height);
 }
 
 function createCanvas() {
@@ -412,9 +411,7 @@ function populateCanvas() {
 }
 
 function drawEverything() {
-  ctx.beginPath();
   ctx.clearRect(0,0,canvas.width,canvas.height);
-  ctx.closePath();
   for(var id in ECS.Entities) {
     var entity = ECS.Entities[id];
     if(entity.components.renderer) {
