@@ -333,7 +333,7 @@ function createCanvas() {
   this.canvas = canvas;
   this.ctx = canvas.getContext("2d");
   
-  $(window).resize(function(event){
+  $(window).resize(function(e){
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight - 2;
     
@@ -341,6 +341,8 @@ function createCanvas() {
   });
   
   $("canvas").mousedown(function(e) {
+    e.preventDefault();
+    
     isCharging = true;
     mouse.x = e.pageX;
     mouse.y = e.pageY;
@@ -349,6 +351,8 @@ function createCanvas() {
   });
 
   $("canvas").mouseup(function(e) {
+    e.preventDefault();
+    
     isCharging = false;
     
     var r = circleSize;
@@ -363,6 +367,8 @@ function createCanvas() {
   });
 
   $("canvas").mousemove(function(e) {
+    e.preventDefault();
+    
     if(mouse.lx !== null && mouse.ly !== null) {
       mouse.lx = e.pageX;
       mouse.ly = e.pageY;
@@ -383,6 +389,8 @@ function createCanvas() {
   });
   
   $("canvas").mouseleave(function(e) {
+    e.preventDefault();
+    
     targetEntity = null;
     isCharging = false;
     mouse.x = null;
