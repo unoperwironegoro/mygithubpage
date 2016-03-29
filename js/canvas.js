@@ -1,5 +1,6 @@
 //==================================== ECS =====================================
 var canvasMoving = true;
+var isRunning = true;
 
 var ECS = { 
   Entities:[],
@@ -114,6 +115,9 @@ var ECS = {
 };
 
 function update() {
+  if(isRunning) {
+    
+  }
   for(var system in ECS.Systems) {
     ECS.Systems[system]();
   }
@@ -314,8 +318,10 @@ function resetCanvas() {
 }
 
 function clearCanvas() {
+  isRunning = false;
   ECS.Entities = [];
   ctx.clearRect(0,0,canvas.width,canvas.height);
+  isRunning = true;
 }
 
 function createCanvas() {
