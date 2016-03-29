@@ -310,11 +310,11 @@ var axisLength = 10;
 
 function resetCanvas() {
   clearCanvas();
-  populateCanvas();
 }
 
 function clearCanvas() {
   ECS.Entities.length = 0;
+  populateCanvas();
 }
 
 function createCanvas() {
