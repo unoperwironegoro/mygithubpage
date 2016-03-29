@@ -331,8 +331,8 @@ function createCanvas() {
   this.ctx = canvas.getContext("2d");
   
   $(window).resize(function(event){
-    //canvas.width = window.innerWidth;
-    //canvas.height = window.innerHeight - 2;
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight - 2;
     
     drawEverything();
   });
