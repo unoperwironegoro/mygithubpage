@@ -252,6 +252,7 @@ function assembleCircle(x,y,s,r,e) {
     }
   }));
   
+  entity.lastTimePlayed = audioContext.currentTime;
   
   entity.addComponent( new ECS.Components.Collider(r, function(ce, d) {
     var cposition = ce.components.position;
@@ -262,8 +263,11 @@ function assembleCircle(x,y,s,r,e) {
     cposition.x += entity.components.mover.speed * dx/d;
     cposition.y += entity.components.mover.speed * dy/d;
     
-    if(soundPlaying) {
-      createOscillatorFromSize(r);
+    if(audioContext.currentTime - entity.lastTimePlayed > soundDelay) {
+      entity.lastTimePlayed = audioContext.currentTime;
+      if(soundPlaying) {
+        createOscillatorFromSize(r);
+      }
     }
   }));
   
@@ -517,6 +521,7 @@ var fullSpectrum = false;
 var numKeys = 56;
 var initialKey = 20;
 var soundTime = 0.2;
+var soundDelay = 0.25;
 
 function initSound() {
   try {
@@ -526,6 +531,7 @@ function initSound() {
   catch(e) {
     alert('Web Audio API is not supported in this browser');
   }
+  
   gainNode = audioContext.createGain();
   gainNode.gain.value = volume;
   gainNode.connect(audioContext.destination);

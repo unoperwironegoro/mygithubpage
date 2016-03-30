@@ -158,9 +158,14 @@
     function soundToggle() {
         $("#sound").toggleClass("fa-volume-up");
         $("#sound").toggleClass("fa-volume-off");
-        $("h1").html("...").hide().fadeIn("slow");
-        $("h3").html("I'll make it sound nice soon!").hide().fadeIn("slow");
         soundPlaying = !soundPlaying;
+        if(soundPlaying) {
+          $("h1").html("...").hide().fadeIn("slow");
+          $("h3").html("Sound is a work in progress!").hide().fadeIn("slow");
+        } else {
+          $("h1").html("...");
+          $("h3").html("My ears have also bled.").hide().fadeIn("slow");
+        }
     }
     
     function removeHeader() {
