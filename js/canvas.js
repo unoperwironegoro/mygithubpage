@@ -212,13 +212,13 @@ ECS.Components.Targeter = function ComponentTargeter(position){
 ECS.Components.Targeter.prototype.name = 'targeter';
 
 //================================ Assemblages =================================
-var keys = [   0, 12, 24, 36, 48, //1st
-            // 2, 14, 26, 38, 50, //2nd EXPERIMENTAL
-            // 4, 16, 28, 40, 52, //3rd
-               5, 17, 29, 41, 53, //4th
-            // 7, 19, 31, 43, 55, //5th
-            // 9, 21, 33, 45, 57, //6th
-            //11, 23, 35, 47, 59 //7th
+var keys = [   0, 12, 24, 36, //1st
+            // 2, 14, 26, 38, //2nd EXPERIMENTAL
+            // 4, 16, 28, 40, //3rd
+               5, 17, 29, 41, //4th
+            // 7, 19, 31, 43, //5th
+            // 9, 21, 33, 45, //6th
+            //11, 23, 35, 47, //7th
            ]
 var maxKeyShift = keys[keys.length - 1];
 function assembleRandom(rootNote, e) {
@@ -514,8 +514,9 @@ var audioContext;
 var gainNode;
 var volume = 0.05;
 var fullSpectrum = false;
-var numKeys = 68;
+var numKeys = 56;
 var initialKey = 20;
+var soundTime = 0.2;
 
 function initSound() {
   try {
@@ -544,7 +545,7 @@ function createOscillatorFromSize(r) {
   osc.type = oscTypes[3];//Math.floor(Math.random() * oscTypes.length)];
   osc.frequency.value = freq;
   osc.start(audioContext.currentTime);
-  osc.stop(audioContext.currentTime + 0.03);
+  osc.stop(audioContext.currentTime + soundTime);
   osc.connect(gainNode);
 }
 
