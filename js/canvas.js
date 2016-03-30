@@ -212,12 +212,15 @@ ECS.Components.Targeter = function ComponentTargeter(position){
 ECS.Components.Targeter.prototype.name = 'targeter';
 
 //================================ Assemblages =================================
-var keys = [0 ,  4,  7,  
-            12, 16, 19,
-            24, 28, 31,
-            36, 40, 43,
-            48, 52, 55];
-var maxKeyShift = 55;
+var keys = [   0, 12, 24, 36, 48, //1st
+            // 2, 14, 26, 38, 50, //2nd EXPERIMENTAL
+            // 4, 16, 28, 40, 52, //3rd
+               5, 17, 29, 41, 53, //4th
+            // 7, 19, 31, 43, 55, //5th
+            // 9, 21, 33, 45, 57, //6th
+            //11, 23, 35, 47, 59 //7th
+           ]
+var maxKeyShift = keys[keys.length - 1];
 function assembleRandom(rootNote, e) {
   var x = Math.random() * this.canvas.width;
   var y = Math.random() * this.canvas.height;
@@ -506,7 +509,7 @@ function drawEverything() {
 }
 
 //=============================== Sound ========================================
-var soundPlaying = true;
+var soundPlaying = false;
 var audioContext;
 var gainNode;
 var volume = 0.05;
@@ -527,6 +530,8 @@ function initSound() {
   gainNode.connect(audioContext.destination);
 }
 
+var oscTypes = ["sawtooth", "sine", "square", "triangle"];
+
 function createOscillatorFromSize(r) {
   var key = numKeys * (1 - r/maxCircleSize) + initialKey;
   if(!fullSpectrum) {
@@ -536,10 +541,10 @@ function createOscillatorFromSize(r) {
   //https://en.wikipedia.org/wiki/Piano_key_frequencies
   var osc = audioContext.createOscillator();
   
-  osc.type = "triangle";
+  osc.type = oscTypes[3];//Math.floor(Math.random() * oscTypes.length)];
   osc.frequency.value = freq;
   osc.start(audioContext.currentTime);
-  osc.stop(audioContext.currentTime + 0.2);
+  osc.stop(audioContext.currentTime + 0.03);
   osc.connect(gainNode);
 }
 
