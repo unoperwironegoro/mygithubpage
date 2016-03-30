@@ -512,7 +512,7 @@ function drawEverything() {
 var soundPlaying = false;
 var audioContext;
 var gainNode;
-var volume = 0.05;
+var volume = 8;
 var fullSpectrum = false;
 var numKeys = 56;
 var initialKey = 20;
@@ -542,11 +542,16 @@ function createOscillatorFromSize(r) {
   //https://en.wikipedia.org/wiki/Piano_key_frequencies
   var osc = audioContext.createOscillator();
   
-  osc.type = oscTypes[3];//Math.floor(Math.random() * oscTypes.length)];
+  osc.type = oscTypes[1];//Math.floor(Math.random() * oscTypes.length)];
   osc.frequency.value = freq;
   osc.start(audioContext.currentTime);
   osc.stop(audioContext.currentTime + soundTime);
-  osc.connect(gainNode);
+  
+  var volReducer = audioContext.createGain();
+  volReducer.gain.value = 1/(1 + freq/10);
+  
+  osc.connect(volReducer);
+  volReducer.connect(gainNode);
 }
 
 //============================ Helper Functions ================================
