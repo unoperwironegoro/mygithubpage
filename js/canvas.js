@@ -212,13 +212,19 @@ ECS.Components.Targeter = function ComponentTargeter(position){
 ECS.Components.Targeter.prototype.name = 'targeter';
 
 //================================ Assemblages =================================
-
-function assembleRandom(e) {
+var keys = [0 ,  4,  7,  
+            12, 16, 19,
+            24, 28, 31,
+            36, 40, 43,
+            48, 52, 55];
+var maxKeyShift = 55;
+function assembleRandom(rootNote, e) {
   var x = Math.random() * this.canvas.width;
   var y = Math.random() * this.canvas.height;
   
   var s = Math.random() * 7;
-  var r = Math.random() * maxCircleSize;
+  var key = rootNote + keys[Math.floor(Math.random() * keys.length)];
+  var r = maxCircleSize * (1 - key / numKeys);
   
   return assembleCircle(x,y,s,r,e);
 }
@@ -372,8 +378,6 @@ function createCanvas() {
     mouse.ly = null;
     mouse.x = e.pageX;
     mouse.y = e.pageY;
-    
-    entity.print();
   });
 
   $("canvas").mousemove(function(e) {
@@ -414,21 +418,21 @@ function createCanvas() {
 }
 
 function populateCanvas() {
-  var e1 = assembleRandom(null);
-  var e2 = assembleRandom(e1);
+  var rootNote = Math.floor(Math.random() * (numKeys - maxKeyShift));
   
-  var e3 = assembleRandom(e2);
-  var e4 = assembleRandom(e3);
+  var e1 = assembleRandom(rootNote, null);
+  var e2 = assembleRandom(rootNote, e1);
   
-  var e5 = assembleRandom(e3);
-  var e6 = assembleRandom(e5);
+  var e3 = assembleRandom(rootNote, e2);
+  var e4 = assembleRandom(rootNote, e3);
+  
+  var e5 = assembleRandom(rootNote, e3);
   
   ECS.Entities.push(e1);
   ECS.Entities.push(e2);
   ECS.Entities.push(e3);
   ECS.Entities.push(e4);
   ECS.Entities.push(e5);
-  ECS.Entities.push(e6);
 }
 
 function drawEverything() {
@@ -506,11 +510,9 @@ var soundPlaying = true;
 var audioContext;
 var gainNode;
 var volume = 0.05;
-var fullSpectrum = true;
-var maxFreq = 4200;
-var minFreq = 27.5;
-var numKeys = 78;
-var initialKey = 10;
+var fullSpectrum = false;
+var numKeys = 68;
+var initialKey = 20;
 
 function initSound() {
   try {
@@ -526,24 +528,19 @@ function initSound() {
 }
 
 function createOscillatorFromSize(r) {
-  var osc;
-  if(fullSpectrum) {
-    osc = createFullSpectrumOscillator(r);
-  } else {
-    
+  var key = numKeys * (1 - r/maxCircleSize) + initialKey;
+  if(!fullSpectrum) {
+    key = Math.floor(key);
   }
-  osc.start(audioContext.currentTime);
-  osc.stop(audioContext.currentTime + 0.2);
-  osc.connect(gainNode);
-}
-
-function createFullSpectrumOscillator(r) {
-  var key = numKeys * (maxCircleSize - r)/maxCircleSize + initialKey;
   var freq = Math.pow(2, (key - 49)/12) * 440; 
   //https://en.wikipedia.org/wiki/Piano_key_frequencies
   var osc = audioContext.createOscillator();
+  
+  osc.type = "triangle";
   osc.frequency.value = freq;
-  return osc;
+  osc.start(audioContext.currentTime);
+  osc.stop(audioContext.currentTime + 0.2);
+  osc.connect(gainNode);
 }
 
 //============================ Helper Functions ================================
