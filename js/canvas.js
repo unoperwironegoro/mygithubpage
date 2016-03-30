@@ -218,7 +218,7 @@ function assembleRandom(e) {
   var y = Math.random() * this.canvas.height;
   
   var s = Math.random() * 7;
-  var r = Math.random() * 30;
+  var r = Math.random() * maxCircleSize;
   
   return assembleCircle(x,y,s,r,e);
 }
@@ -243,6 +243,7 @@ function assembleCircle(x,y,s,r,e) {
     }
   }));
   
+  
   entity.addComponent( new ECS.Components.Collider(r, function(ce, d) {
     var cposition = ce.components.position;
     var position = entity.components.position;
@@ -251,6 +252,10 @@ function assembleCircle(x,y,s,r,e) {
     
     cposition.x += entity.components.mover.speed * dx/d;
     cposition.y += entity.components.mover.speed * dy/d;
+    
+    if(soundPlaying) {
+      createOscillatorFromSize(r);
+    }
   }));
   
   entity.addComponent( new ECS.Components.Renderer(function() {
@@ -305,6 +310,7 @@ var mouse = {
 var isCharging = false;
 var pixelsPerSpeed = 40;
 var circleSize = 3;
+var maxCircleSize = 100;
 var circleSpeed = 3;
 var axisLength = 10;
 
@@ -319,6 +325,8 @@ function clearCanvas() {
 }
 
 function createCanvas() {
+  initSound();
+  
   var canvas = document.createElement("Canvas");
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight - 2;
@@ -364,6 +372,8 @@ function createCanvas() {
     mouse.ly = null;
     mouse.x = e.pageX;
     mouse.y = e.pageY;
+    
+    entity.print();
   });
 
   $("canvas").mousemove(function(e) {
@@ -379,7 +389,7 @@ function createCanvas() {
       var sizeProj = project(basisVec, mouseVec);
       var speedProj = project(rot90(basisVec), mouseVec);
       
-      circleSize = magnitude(sizeProj);
+      circleSize = Math.min(maxCircleSize, magnitude(sizeProj));
       circleSpeed = magnitude(speedProj);
       
     } else {
@@ -489,6 +499,51 @@ function drawEverything() {
     ctx.strokeStyle = "rgba(105, 30, 105, 0.5)";
     ctx.stroke();
   }
+}
+
+//=============================== Sound ========================================
+var soundPlaying = true;
+var audioContext;
+var gainNode;
+var volume = 0.05;
+var fullSpectrum = true;
+var maxFreq = 4200;
+var minFreq = 27.5;
+var numKeys = 78;
+var initialKey = 10;
+
+function initSound() {
+  try {
+    // Fix up for prefixing
+    audioContext = new (window.AudioContext||window.webkitAudioContext)();
+  }
+  catch(e) {
+    alert('Web Audio API is not supported in this browser');
+  }
+  gainNode = audioContext.createGain();
+  gainNode.gain.value = volume;
+  gainNode.connect(audioContext.destination);
+}
+
+function createOscillatorFromSize(r) {
+  var osc;
+  if(fullSpectrum) {
+    osc = createFullSpectrumOscillator(r);
+  } else {
+    
+  }
+  osc.start(audioContext.currentTime);
+  osc.stop(audioContext.currentTime + 0.2);
+  osc.connect(gainNode);
+}
+
+function createFullSpectrumOscillator(r) {
+  var key = numKeys * (maxCircleSize - r)/maxCircleSize + initialKey;
+  var freq = Math.pow(2, (key - 49)/12) * 440; 
+  //https://en.wikipedia.org/wiki/Piano_key_frequencies
+  var osc = audioContext.createOscillator();
+  osc.frequency.value = freq;
+  return osc;
 }
 
 //============================ Helper Functions ================================

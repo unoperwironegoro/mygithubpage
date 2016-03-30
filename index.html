@@ -103,8 +103,7 @@
                   <a class="btn btn-light icon-circle overlay" onclick="activatePower()">
                     <i class="fa fa-power-off"></i>
                   </a>
-                  <a class="btn btn-light icon-circle overlay" 
-                                    onclick="pausePlayToggle()">
+                  <a class="btn btn-light icon-circle overlay" onclick="pausePlayToggle()">
                     <i id="pausePlay" class="fa fa-pause"></i>
                   </a>
                   <a class="btn btn-light icon-circle overlay" onclick="clearCanvas()">
@@ -112,6 +111,9 @@
                   </a>
                   <a class="btn btn-light icon-circle overlay" onclick="resetCanvas()">
                     <i class="fa fa-repeat"></i>
+                  </a>
+                  <a class="btn btn-light icon-circle overlay" onclick="soundToggle()">
+                    <i id="sound" class="fa fa-volume-up"></i>
                   </a>
                 </div>
             </div>
@@ -151,6 +153,12 @@
         $("#pausePlay").toggleClass("fa-pause");
         $("#pausePlay").toggleClass("fa-play");
         canvasMoving = !canvasMoving;
+    }
+    
+    function soundToggle() {
+        $("#sound").toggleClass("fa-volume-up");
+        $("#sound").toggleClass("fa-volume-off");
+        soundPlaying = !soundPlaying;
     }
     
     function removeHeader() {
