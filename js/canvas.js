@@ -319,7 +319,7 @@ var mouse = {
 var isCharging = false;
 var pixelsPerSpeed = 40;
 var circleSize = 3;
-var maxCircleSize = 100;
+var maxCircleSize = 75;
 var circleSpeed = 3;
 var axisLength = 10;
 
