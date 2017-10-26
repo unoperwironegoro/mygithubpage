@@ -9,7 +9,7 @@
     <meta name="description" content="The personal webpage of Harjuno Perwironegoro">
     <meta name="author" content="Harjuno Perwironegoro">
 
-    <title>Uno's Page</title>
+    <title>Unoper</title>
 
     <!-- Bootstrap Core CSS -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
@@ -49,28 +49,22 @@
                                 <div class="panel-body sidebar-dropdown">
                                    <p>My name is Harjuno Perwironegoro, although everyone just calls me Uno.
                                    </p>
-                                   <p>I'm currently a third year Computing undergraduate at Imperial College London.
+                                   <p>I'm currently a third year computing undergraduate at Imperial College London.
                                    </p>
-                                   <p>I make games and do acapella as part of Surcery, check us out!
+                                   <p>If I'm not busy doing gamedev, you'll probably catch me either sleeping or doing acapella.
                                    </p>
                                 </div>
                             </div>
                     </div>
                     <li>
-                        <a data-toggle="collapse" data-parent="#accordion" href="#CV">CV</a>
+                        <a data-toggle="collapse" data-parent="#accordion" href="#Links">Links</a>
                     </li>
                     <div class="panel">
-                            <div id ="CV" class="panel-collapse collapse">
+                            <div id ="Links" class="collapse">
                                 <div class="panel-body sidebar-dropdown">
-                                </div>
-                            </div>
-                    </div>
-                    <li>
-                        <a data-toggle="collapse" data-parent="#accordion" href="#Portfolio">Portfolio</a>
-                    </li>
-                    <div class="panel">
-                            <div id ="Portfolio" class="collapse">
-                                <div class="panel-body sidebar-dropdown">
+                                    <a href="https://twitter.com/UnoPerwironegor"><i class="fa fa-twitter" aria-hidden="true"></i> &emsp; Twitter</a><br>
+                                    <a href="https://github.com/unoperwironegoro"><i class="fa fa-github" aria-hidden="true"></i> &emsp; GitHub</a><br>
+                                    <a href="https://www.linkedin.com/in/unoper/"><i class="fa fa-linkedin-square" aria-hidden="true"></i> &emsp; LinkedIn</a>
                                 </div>
                             </div>
                     </div>
@@ -78,19 +72,16 @@
                         <a data-toggle="collapse" data-parent="#accordion" href="#Contact">Contact Details</a>
                     </li>
                     <div class="panel">
-                            <div id ="Contact" class="panel-collapse collapse"> 
+                            <div id ="Contact" class="panel-collapse collapse">
                                 <div class="panel-body sidebar-dropdown">
                                     <i class="fa fa-envelope-o fa-fw"></i> &emsp; hp1515@ic.ac.uk
                                 </div>
                             </div>
                     </div>
                 </div>
-                <div class="col-lg-12">
-                    <p>Copyright &copy; Harjuno Perwironegoro 2016</p>
-                </div>
         </ul>
     </nav>
-    
+
     <!-- Header -->
     <header class="header">
         <div id="header" class="text-vertical-center">
@@ -130,7 +121,7 @@
     $(window).load(function() {
         createCanvas();
     });
-    
+
     // Closes the sidebar menu
     $("#menu-close").click(function(e) {
         e.preventDefault();
@@ -142,18 +133,18 @@
         e.preventDefault();
         $("#sidebar-wrapper").toggleClass("active");
     });
-    
+
     function activatePower() {
         removeHeader();
         //startIconArmy();
     }
-    
+
     function pausePlayToggle() {
         $("#pausePlay").toggleClass("fa-pause");
         $("#pausePlay").toggleClass("fa-play");
         canvasMoving = !canvasMoving;
     }
-    
+
     function soundToggle() {
         $("#sound").toggleClass("fa-volume-up");
         $("#sound").toggleClass("fa-volume-off");
@@ -166,12 +157,12 @@
           $("h3").html("Music, or noise?").hide().fadeIn("slow");
         }
     }
-    
+
     function removeHeader() {
         $("#header").fadeOut(1000);
     }
     </script>
-    
+
     <!-- Canvas JavaScript -->
     <script src="js/canvas.js"></script>
 
